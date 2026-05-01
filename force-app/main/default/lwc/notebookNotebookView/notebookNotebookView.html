@@ -1,0 +1,36 @@
+<template>
+    <div class="notebook-view">
+        <div class="notebook-header">
+            <lightning-icon icon-name="standard:document" size="small" class="slds-m-right_x-small"></lightning-icon>
+            <h1 class="notebook-title">{notebookName}</h1>
+        </div>
+
+        <lightning-tabset active-tab-value={activeTab} onselect={handleTabSelect} class="mode-tabs">
+            <lightning-tab label="Resources" value="resources">
+                <template if:true={notebookId}>
+                    <c-notebook-resources notebook-id={notebookId}></c-notebook-resources>
+                </template>
+            </lightning-tab>
+            <lightning-tab label="Notes" value="notes">
+                <template if:true={notebookId}>
+                    <c-notebook-notes notebook-id={notebookId}></c-notebook-notes>
+                </template>
+            </lightning-tab>
+            <lightning-tab label="Cards" value="cards">
+                <template if:true={notebookId}>
+                    <c-notebook-cards notebook-id={notebookId}></c-notebook-cards>
+                </template>
+            </lightning-tab>
+            <lightning-tab label="Exams" value="exams">
+                <template if:true={notebookId}>
+                    <c-notebook-exams notebook-id={notebookId}></c-notebook-exams>
+                </template>
+            </lightning-tab>
+            <lightning-tab label="AI Chat" value="aichat">
+                <template if:true={notebookId}>
+                    <c-notebook-ai-chat notebook-id={notebookId}></c-notebook-ai-chat>
+                </template>
+            </lightning-tab>
+        </lightning-tabset>
+    </div>
+</template>

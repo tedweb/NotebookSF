@@ -1,0 +1,66 @@
+<template>
+    <div class="chat-shell">
+        <!-- Header -->
+        <div class="chat-header">
+            <lightning-icon icon-name="utility:einstein" size="small" class="einstein-icon"></lightning-icon>
+            <span class="chat-title">AI Chat</span>
+            <template if:true={hasMessages}>
+                <lightning-button
+                    label="Clear"
+                    variant="base"
+                    class="clear-btn"
+                    onclick={handleClear}
+                ></lightning-button>
+            </template>
+        </div>
+
+        <!-- Message list -->
+        <div class="message-list" aria-live="polite" aria-label="Conversation" lwc:ref="messageList">
+            <template if:false={hasMessages}>
+                <div class="empty-state">
+                    <lightning-icon icon-name="utility:einstein" size="large" class="empty-icon"></lightning-icon>
+                    <p class="empty-heading">Ask anything about this notebook</p>
+                    <p class="empty-sub">Your questions and answers will appear here.</p>
+                </div>
+            </template>
+
+            <template if:true={hasMessages}>
+                <template for:each={messages} for:item="msg">
+                    <div key={msg.id} class={msg.bubbleClass}>
+                        <div class="bubble-text">{msg.text}</div>
+                        <div class="bubble-time">{msg.time}</div>
+                    </div>
+                </template>
+            </template>
+
+            <!-- Loading dots -->
+            <template if:true={isLoading}>
+                <div class="bubble assistant-bubble loading-bubble">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </template>
+        </div>
+
+        <!-- Input area -->
+        <div class="input-area">
+            <lightning-textarea
+                value={inputValue}
+                placeholder="Ask a question…"
+                max-length="2000"
+                aria-label="Message input"
+                class="chat-input"
+                onchange={handleInputChange}
+                onkeydown={handleKeyDown}
+            ></lightning-textarea>
+            <lightning-button
+                label="Send"
+                variant="brand"
+                disabled={isSendDisabled}
+                onclick={handleSend}
+                class="send-btn"
+            ></lightning-button>
+        </div>
+    </div>
+</template>

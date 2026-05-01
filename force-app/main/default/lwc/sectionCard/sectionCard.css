@@ -1,0 +1,63 @@
+:host {
+    display: block;
+}
+
+.section-card {
+    background: var(--slds-g-color-neutral-base-100, #fff);
+    border: 1px solid var(--slds-g-color-border-base-1, #dddbda);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--slds-g-color-neutral-base-98, #fafaf9);
+    border-bottom: 1px solid var(--slds-g-color-border-base-1, #dddbda);
+    min-height: 2.75rem;
+}
+
+.section-title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--slds-g-color-neutral-base-10, #080707);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.header-actions {
+    display: none;
+    gap: 0.125rem;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+}
+
+.section-header:hover .header-actions {
+    display: flex;
+}
+
+.section-body {
+    padding: 0.5rem 0;
+    min-height: 2rem;
+}
+
+.section-footer {
+    padding: 0.5rem 1rem 0.75rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.star-btn {
+    flex-shrink: 0;
+    opacity: 0.4;
+    transition: opacity 0.15s;
+}
+
+.section-header:hover .star-btn,
+.star-btn.starred {
+    opacity: 1;
+}

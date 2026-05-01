@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSF_NoteId__c</fullName>
+    <label>Note</label>
+    <referenceTo>NSF_Note__c</referenceTo>
+    <relationshipLabel>Note Stars</relationshipLabel>
+    <relationshipName>NSF_Note_Stars</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

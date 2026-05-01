@@ -1,0 +1,72 @@
+<template>
+    <template if:true={isOpen}>
+        <div class="carousel-overlay" role="dialog" aria-modal="true" aria-label="Card Deck">
+            <div class="carousel-panel">
+
+                <!-- Header -->
+                <div class="carousel-header">
+                    <span class="deck-label">{sectionTitle}</span>
+                    <span class="deck-counter">{currentIndexLabel}</span>
+                    <lightning-button-icon
+                        icon-name="utility:close"
+                        variant="bare-inverse"
+                        size="medium"
+                        title="Close"
+                        onclick={handleClose}
+                    ></lightning-button-icon>
+                </div>
+
+                <!-- Card stage + navigation -->
+                <div class="carousel-body">
+                    <button
+                        class="nav-btn"
+                        disabled={isPrevDisabled}
+                        aria-label="Previous card"
+                        onclick={handlePrev}
+                    >&#8249;</button>
+
+                    <div
+                        class="card-stage"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Flip card"
+                        onclick={handleFlip}
+                    >
+                        <div class={cardInnerClass}>
+                            <!-- Front face -->
+                            <div class="card-face front">
+                                <p class="card-front-text">{currentCard.Front__c}</p>
+                            </div>
+                            <!-- Back face -->
+                            <div class="card-face back">
+                                <template if:true={currentCard.Back__c}>
+                                    <div class="card-back-content">
+                                        <lightning-formatted-rich-text
+                                            value={currentCard.Back__c}
+                                        ></lightning-formatted-rich-text>
+                                    </div>
+                                </template>
+                                <template if:false={currentCard.Back__c}>
+                                    <p class="card-empty-text">No back content.</p>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button
+                        class="nav-btn"
+                        disabled={isNextDisabled}
+                        aria-label="Next card"
+                        onclick={handleNext}
+                    >&#8250;</button>
+                </div>
+
+                <!-- Footer hint -->
+                <div class="carousel-footer">
+                    <span class="flip-hint">Click card or press Space to flip &nbsp;·&nbsp; ← → to navigate &nbsp;·&nbsp; Esc to close</span>
+                </div>
+
+            </div>
+        </div>
+    </template>
+</template>

@@ -1,0 +1,353 @@
+<template>
+    <div class="exams-view">
+
+        <template if:false={sections.data}>
+            <template if:false={sections.error}>
+                <div class="loading-state">
+                    <lightning-spinner alternative-text="Loading sections" size="medium"></lightning-spinner>
+                </div>
+            </template>
+        </template>
+
+        <template if:true={sections.error}>
+            <p class="slds-text-color_error slds-p-around_medium">Failed to load sections.</p>
+        </template>
+
+        <template if:true={hasNoSections}>
+            <div class="empty-state">
+                <lightning-icon icon-name="utility:survey" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                <p class="slds-text-heading_small">No sections yet</p>
+                <p class="slds-text-color_weak slds-m-top_x-small slds-m-bottom_medium">
+                    Create a section to start adding exam questions.
+                </p>
+                <lightning-button label="Add Section" variant="brand" onclick={handleNewSection}></lightning-button>
+            </div>
+        </template>
+
+        <template if:true={hasSections}>
+            <div class="section-grid">
+                <template for:each={sections.data} for:item="sec">
+                    <c-section-card
+                        key={sec.Id}
+                        section-id={sec.Id}
+                        section-title={sec.Title__c}
+                        is-starred={sec.isStarred}
+                        star-id={sec.starId}
+                        oneditsection={handleEditSection}
+                        ondeletesection={handleDeleteSection}
+                        onstarsection={handleStarSection}
+                    >
+                        <!-- Exam items -->
+                        <template if:true={sec.exams}>
+                            <template if:true={sec.hasExams}>
+                                <template for:each={sec.exams} for:item="exam">
+                                    <div key={exam.Id}>
+                                        <!-- Exam header row -->
+                                        <div
+                                            class="exam-item"
+                                            data-exam-id={exam.Id}
+                                            data-section-id={sec.Id}
+                                            onclick={handleExamClick}
+                                        >
+                                            <lightning-icon
+                                                icon-name={exam.chevronIcon}
+                                                size="x-small"
+                                                class="exam-chevron"
+                                            ></lightning-icon>
+                                            <span class="exam-order">#{exam.displayOrder}</span>
+                                            <span class="exam-question">{exam.Question__c}</span>
+                                            <template if:true={exam.hasAttempt}>
+                                                <div class={exam.attemptBadgeClass}>
+                                                    <lightning-icon
+                                                        icon-name={exam.attemptIcon}
+                                                        size="x-small"
+                                                    ></lightning-icon>
+                                                </div>
+                                            </template>
+                                            <div class="exam-item-actions" onclick={stopProp}>
+                                                <lightning-button-icon
+                                                    icon-name={exam.starIcon}
+                                                    variant="bare"
+                                                    size="x-small"
+                                                    title="Star"
+                                                    data-item-id={exam.Id}
+                                                    onclick={handleStarToggle}
+                                                ></lightning-button-icon>
+                                                <lightning-button-icon
+                                                    icon-name="utility:arrowup"
+                                                    variant="bare"
+                                                    size="x-small"
+                                                    title="Move Up"
+                                                    data-exam-id={exam.Id}
+                                                    data-section-id={sec.Id}
+                                                    data-direction="up"
+                                                    onclick={handleMoveExam}
+                                                ></lightning-button-icon>
+                                                <lightning-button-icon
+                                                    icon-name="utility:arrowdown"
+                                                    variant="bare"
+                                                    size="x-small"
+                                                    title="Move Down"
+                                                    data-exam-id={exam.Id}
+                                                    data-section-id={sec.Id}
+                                                    data-direction="down"
+                                                    onclick={handleMoveExam}
+                                                ></lightning-button-icon>
+                                                <lightning-button-icon
+                                                    icon-name="utility:edit"
+                                                    variant="bare"
+                                                    size="x-small"
+                                                    title="Edit Question"
+                                                    data-exam-id={exam.Id}
+                                                    data-section-id={sec.Id}
+                                                    onclick={handleEditExam}
+                                                ></lightning-button-icon>
+                                                <lightning-button-icon
+                                                    icon-name="utility:delete"
+                                                    variant="bare"
+                                                    size="x-small"
+                                                    title="Delete Question"
+                                                    data-exam-id={exam.Id}
+                                                    data-section-id={sec.Id}
+                                                    onclick={handleDeleteExam}
+                                                ></lightning-button-icon>
+                                            </div>
+                                        </div>
+
+                                        <!-- Expanded exam detail -->
+                                        <template if:true={exam.expanded}>
+                                            <div class="exam-detail" onclick={stopProp}>
+                                                <!-- Pre-submit: candidate selection -->
+                                                <template if:false={exam.hasAttempt}>
+                                                    <lightning-radio-group
+                                                        label="Select an answer"
+                                                        options={exam.candidateOptions}
+                                                        value={exam.selectedCandidateId}
+                                                        type="radio"
+                                                        data-exam-id={exam.Id}
+                                                        data-section-id={sec.Id}
+                                                        onchange={handleCandidateSelect}
+                                                    ></lightning-radio-group>
+                                                    <lightning-button
+                                                        label="Submit"
+                                                        variant="brand"
+                                                        disabled={exam.isSubmitDisabled}
+                                                        class="submit-btn"
+                                                        data-exam-id={exam.Id}
+                                                        data-section-id={sec.Id}
+                                                        onclick={handleSubmitAttempt}
+                                                    ></lightning-button>
+                                                </template>
+
+                                                <!-- Post-submit: result display -->
+                                                <template if:true={exam.hasAttempt}>
+                                                    <div class={exam.resultBannerClass}>
+                                                        <lightning-icon
+                                                            icon-name={exam.attemptIcon}
+                                                            size="x-small"
+                                                            class="slds-m-right_x-small"
+                                                        ></lightning-icon>
+                                                        {exam.resultLabel}
+                                                    </div>
+                                                    <ul class="candidate-result-list">
+                                                        <template for:each={exam.candidates} for:item="cr">
+                                                            <li key={cr.Id} class={cr.itemClass}>
+                                                                <lightning-icon
+                                                                    if:true={cr.isCorrect}
+                                                                    icon-name="utility:check"
+                                                                    size="x-small"
+                                                                    class="slds-m-right_xx-small"
+                                                                ></lightning-icon>
+                                                                <lightning-icon
+                                                                    if:true={cr.wasSelectedWrong}
+                                                                    icon-name="utility:close"
+                                                                    size="x-small"
+                                                                    class="slds-m-right_xx-small"
+                                                                ></lightning-icon>
+                                                                <span>{cr.Possible_Answer__c}</span>
+                                                            </li>
+                                                        </template>
+                                                    </ul>
+                                                    <template if:true={exam.Explanation__c}>
+                                                        <div class="exam-explanation">
+                                                            <p class="explanation-label">Explanation</p>
+                                                            <p class="explanation-body">{exam.Explanation__c}</p>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </template>
+                            <template if:false={sec.hasExams}>
+                                <p class="empty-exams-msg">No questions yet.</p>
+                            </template>
+                        </template>
+                        <template if:false={sec.exams}>
+                            <div class="slds-p-around_small">
+                                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                            </div>
+                        </template>
+
+                        <!-- Footer: Add Question -->
+                        <lightning-button
+                            slot="footer-action"
+                            label="Add Question"
+                            variant="brand-outline"
+                            icon-name="utility:add"
+                            size="small"
+                            data-section-id={sec.Id}
+                            onclick={handleNewExam}
+                        ></lightning-button>
+                    </c-section-card>
+                </template>
+            </div>
+        </template>
+
+        <template if:true={sections.data}>
+            <div class="fab-container">
+                <lightning-button
+                    label="Add Section"
+                    variant="brand"
+                    icon-name="utility:add"
+                    onclick={handleNewSection}
+                ></lightning-button>
+            </div>
+        </template>
+
+    </div>
+
+    <!-- ── Modals ─────────────────────────────────────────────────── -->
+
+    <!-- Create/Edit Section -->
+    <c-lwc-modal
+        header={sectionModalHeader}
+        confirm-button-label="Save"
+        confirm-button-variant="brand"
+        validate-on-confirm
+        onbuttonclick={handleSectionModalButton}
+        class="section-modal"
+    >
+        <div slot="body">
+            <lightning-input
+                label="Section Title"
+                value={sectionDraft.title}
+                required
+                maxlength="120"
+                onchange={handleSectionTitleChange}
+            ></lightning-input>
+        </div>
+    </c-lwc-modal>
+
+    <!-- Delete Section -->
+    <c-lwc-modal
+        header="Delete Section"
+        body-text={deleteSectionBodyText}
+        confirm-button-label="Delete"
+        confirm-button-variant="destructive"
+        onbuttonclick={handleDeleteSectionConfirm}
+        class="delete-section-modal"
+    ></c-lwc-modal>
+
+    <!-- Exam wizard (2 pages) -->
+    <c-lwc-modal
+        header={examWizardHeader}
+        confirm-button-label={examWizardConfirmLabel}
+        confirm-button-variant="brand"
+        validate-on-confirm
+        onbuttonclick={handleExamWizardButton}
+        class="exam-wizard-modal"
+    >
+        <div slot="body">
+            <p class="wizard-step-label">{wizardStepLabel}</p>
+
+            <!-- Page 1: Question + Explanation -->
+            <template if:true={isWizardPage1}>
+                <lightning-textarea
+                    label="Question"
+                    value={examDraft.question}
+                    required
+                    max-length="1024"
+                    rows="4"
+                    placeholder="Enter the exam question..."
+                    class="slds-m-bottom_small"
+                    onchange={handleExamQuestionChange}
+                ></lightning-textarea>
+                <lightning-textarea
+                    label="Explanation (optional)"
+                    value={examDraft.explanation}
+                    max-length="1024"
+                    rows="3"
+                    placeholder="Explain the correct answer..."
+                    onchange={handleExamExplanationChange}
+                ></lightning-textarea>
+            </template>
+
+            <!-- Page 2: Answer Candidates -->
+            <template if:true={isWizardPage2}>
+                <p class="wizard-help-text">
+                    Add at least two choices. Check the box next to the correct answer(s).
+                </p>
+                <template for:each={candidateDrafts} for:item="cd">
+                    <div key={cd.key} class="candidate-draft-row">
+                        <lightning-input
+                            type="checkbox"
+                            label="Correct"
+                            checked={cd.isCorrect}
+                            data-key={cd.key}
+                            onchange={handleCandidateCorrectToggle}
+                            class="candidate-correct-toggle"
+                        ></lightning-input>
+                        <lightning-textarea
+                            label="Answer"
+                            value={cd.possibleAnswer}
+                            max-length="1024"
+                            rows="2"
+                            placeholder="Answer option..."
+                            data-key={cd.key}
+                            onchange={handleCandidateAnswerChange}
+                            class="candidate-answer-input"
+                        ></lightning-textarea>
+                        <lightning-button-icon
+                            icon-name="utility:delete"
+                            variant="bare"
+                            size="small"
+                            title="Remove"
+                            data-key={cd.key}
+                            onclick={handleRemoveCandidate}
+                            class="candidate-remove-btn"
+                        ></lightning-button-icon>
+                    </div>
+                </template>
+                <lightning-button
+                    label="Add Answer"
+                    variant="neutral"
+                    icon-name="utility:add"
+                    size="small"
+                    class="add-candidate-btn"
+                    onclick={handleAddCandidate}
+                ></lightning-button>
+            </template>
+        </div>
+
+        <template if:true={showWizardPrevButton}>
+            <lightning-button
+                slot="customButtons"
+                label="← Previous"
+                onclick={handleWizardPrev}
+            ></lightning-button>
+        </template>
+    </c-lwc-modal>
+
+    <!-- Delete Exam -->
+    <c-lwc-modal
+        header="Delete Question"
+        body-text={deleteExamBodyText}
+        confirm-button-label="Delete"
+        confirm-button-variant="destructive"
+        onbuttonclick={handleDeleteExamConfirm}
+        class="delete-exam-modal"
+    ></c-lwc-modal>
+
+</template>

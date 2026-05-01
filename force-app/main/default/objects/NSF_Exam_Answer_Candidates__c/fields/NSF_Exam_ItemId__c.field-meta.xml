@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSF_Exam_ItemId__c</fullName>
+    <label>Exam Item</label>
+    <referenceTo>NSF_Exam__c</referenceTo>
+    <relationshipLabel>Answer Candidates</relationshipLabel>
+    <relationshipName>NSF_Answer_Candidates</relationshipName>
+    <type>MasterDetail</type>
+</CustomField>

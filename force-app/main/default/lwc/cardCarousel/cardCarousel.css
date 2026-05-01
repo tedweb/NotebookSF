@@ -1,0 +1,144 @@
+/* ── Overlay ──────────────────────────────────────────────────────── */
+.carousel-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9000;
+}
+
+.carousel-panel {
+    display: flex;
+    flex-direction: column;
+    width: min(860px, 94vw);
+    background: transparent;
+}
+
+/* ── Header ───────────────────────────────────────────────────────── */
+.carousel-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding: 0 0.25rem;
+}
+
+.deck-label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    flex: 1;
+}
+
+.deck-counter {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Body: nav + card ─────────────────────────────────────────────── */
+.carousel-body {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.nav-btn {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.nav-btn:disabled {
+    opacity: 0.25;
+    cursor: default;
+}
+
+/* ── Card stage ───────────────────────────────────────────────────── */
+.card-stage {
+    flex: 1;
+    perspective: 1200px;
+    cursor: pointer;
+    height: 320px;
+}
+
+.card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-inner.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: #fff;
+    border-radius: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.32);
+    overflow: hidden;
+}
+
+.card-face.back {
+    transform: rotateY(180deg);
+}
+
+.card-front-text {
+    font-size: 1.5rem;
+    text-align: center;
+    line-height: 1.45;
+    color: #16181a;
+    margin: 0;
+    word-break: break-word;
+    /* font-size overridden by JS binary-search sizer */
+}
+
+.card-back-content {
+    overflow-y: auto;
+    max-height: 100%;
+    width: 100%;
+}
+
+.card-empty-text {
+    font-size: 1rem;
+    color: #706e6b;
+    font-style: italic;
+    margin: 0;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────── */
+.carousel-footer {
+    margin-top: 1.125rem;
+    text-align: center;
+}
+
+.flip-hint {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.55);
+}

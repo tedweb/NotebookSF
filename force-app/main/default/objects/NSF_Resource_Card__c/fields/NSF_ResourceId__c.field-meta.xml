@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NSF_ResourceId__c</fullName>
+    <label>Resource</label>
+    <referenceTo>NSF_Resource__c</referenceTo>
+    <relationshipLabel>Card Resources</relationshipLabel>
+    <relationshipName>NSF_Card_Resources</relationshipName>
+    <reparentableMasterDetail>true</reparentableMasterDetail>
+    <type>MasterDetail</type>
+</CustomField>

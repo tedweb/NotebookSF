@@ -1,0 +1,39 @@
+<template>
+    <div class="section-card">
+        <div class="section-header">
+            <span class="section-title">{sectionTitle}</span>
+            <lightning-button-icon
+                icon-name={starIcon}
+                variant="bare"
+                size="x-small"
+                title={starTitle}
+                class={starBtnClass}
+                onclick={handleStar}
+            ></lightning-button-icon>
+            <div class="header-actions">
+                <lightning-button-icon
+                    icon-name="utility:edit"
+                    variant="bare"
+                    size="x-small"
+                    title="Edit Section"
+                    onclick={handleEdit}
+                ></lightning-button-icon>
+                <lightning-button-icon
+                    icon-name="utility:delete"
+                    variant="bare"
+                    size="x-small"
+                    title="Delete Section"
+                    onclick={handleDelete}
+                ></lightning-button-icon>
+            </div>
+        </div>
+
+        <div class="section-body">
+            <slot></slot>
+        </div>
+
+        <div class="section-footer">
+            <slot name="footer-action"></slot>
+        </div>
+    </div>
+</template>

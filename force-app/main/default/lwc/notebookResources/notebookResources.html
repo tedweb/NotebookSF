@@ -1,0 +1,215 @@
+<template>
+    <div class="resources-view">
+
+        <!-- Loading -->
+        <template if:false={sections.data}>
+            <template if:false={sections.error}>
+                <div class="loading-state">
+                    <lightning-spinner alternative-text="Loading sections" size="medium"></lightning-spinner>
+                </div>
+            </template>
+        </template>
+
+        <!-- Error -->
+        <template if:true={sections.error}>
+            <p class="slds-text-color_error slds-p-around_medium">Failed to load sections.</p>
+        </template>
+
+        <!-- Empty state: no sections -->
+        <template if:true={hasNoSections}>
+            <div class="empty-state">
+                <lightning-icon icon-name="utility:open_folder" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                <p class="slds-text-heading_small">No sections yet</p>
+                <p class="slds-text-color_weak slds-m-top_x-small slds-m-bottom_medium">
+                    Create a section to start organizing your resources.
+                </p>
+                <lightning-button label="Add Section" variant="brand" onclick={handleNewSection}></lightning-button>
+            </div>
+        </template>
+
+        <!-- Section cards -->
+        <template if:true={hasSections}>
+            <div class="section-grid">
+                <template for:each={sections.data} for:item="sec">
+                    <c-section-card
+                        key={sec.Id}
+                        section-id={sec.Id}
+                        section-title={sec.Title__c}
+                        is-starred={sec.isStarred}
+                        star-id={sec.starId}
+                        oneditsection={handleEditSection}
+                        ondeletesection={handleDeleteSection}
+                        onstarsection={handleStarSection}
+                    >
+                        <!-- Resource items inside section -->
+                        <template if:true={sec.resources}>
+                            <template if:true={sec.hasResources}>
+                                <template for:each={sec.resources} for:item="res">
+                                    <div key={res.Id} class="resource-item">
+                                        <lightning-icon
+                                            icon-name={res.typeIcon}
+                                            size="x-small"
+                                            class="resource-type-icon"
+                                            alternative-text={res.Type__c}
+                                        ></lightning-icon>
+                                        <a
+                                            href={res.Link__c}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="resource-link"
+                                            title={res.Link__c}
+                                            onclick={handleResourceLinkClick}
+                                        >{res.Title__c}</a>
+                                        <span class="resource-type-badge">{res.Type__c}</span>
+                                        <div class="resource-actions">
+                                            <lightning-button-icon
+                                                icon-name={res.starIcon}
+                                                variant="bare"
+                                                size="x-small"
+                                                title="Star"
+                                                data-item-id={res.Id}
+                                                onclick={handleStarToggle}
+                                            ></lightning-button-icon>
+                                            <lightning-button-icon
+                                                icon-name="utility:edit"
+                                                variant="bare"
+                                                size="x-small"
+                                                title="Edit Resource"
+                                                data-resource-id={res.Id}
+                                                data-section-id={res.NSF_SectionId__c}
+                                                data-title={res.Title__c}
+                                                data-link={res.Link__c}
+                                                data-type={res.Type__c}
+                                                onclick={handleEditResource}
+                                            ></lightning-button-icon>
+                                            <lightning-button-icon
+                                                icon-name="utility:delete"
+                                                variant="bare"
+                                                size="x-small"
+                                                title="Delete Resource"
+                                                data-resource-id={res.Id}
+                                                data-title={res.Title__c}
+                                                onclick={handleDeleteResource}
+                                            ></lightning-button-icon>
+                                        </div>
+                                    </div>
+                                </template>
+                            </template>
+                            <template if:false={sec.hasResources}>
+                                <p class="empty-resources-msg">No resources yet.</p>
+                            </template>
+                        </template>
+                        <template if:false={sec.resources}>
+                            <div class="slds-p-around_small">
+                                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                            </div>
+                        </template>
+
+                        <!-- Footer action slot -->
+                        <lightning-button
+                            slot="footer-action"
+                            label="Add Resource"
+                            variant="brand-outline"
+                            icon-name="utility:add"
+                            size="small"
+                            data-section-id={sec.Id}
+                            onclick={handleNewResource}
+                        ></lightning-button>
+                    </c-section-card>
+                </template>
+            </div>
+        </template>
+
+        <!-- Floating Add Section button -->
+        <template if:true={sections.data}>
+            <div class="fab-container">
+                <lightning-button
+                    label="Add Section"
+                    variant="brand"
+                    icon-name="utility:add"
+                    onclick={handleNewSection}
+                ></lightning-button>
+            </div>
+        </template>
+
+    </div>
+
+    <!-- ── Modals ─────────────────────────────────────────────────── -->
+
+    <!-- Create/Edit Section -->
+    <c-lwc-modal
+        header={sectionModalHeader}
+        confirm-button-label="Save"
+        confirm-button-variant="brand"
+        validate-on-confirm
+        onbuttonclick={handleSectionModalButton}
+        class="section-modal"
+    >
+        <div slot="body">
+            <lightning-input
+                label="Section Title"
+                value={sectionDraft.title}
+                required
+                maxlength="120"
+                onchange={handleSectionTitleChange}
+            ></lightning-input>
+        </div>
+    </c-lwc-modal>
+
+    <!-- Delete Section -->
+    <c-lwc-modal
+        header="Delete Section"
+        body-text={deleteSectionBodyText}
+        confirm-button-label="Delete"
+        confirm-button-variant="destructive"
+        onbuttonclick={handleDeleteSectionConfirm}
+        class="delete-section-modal"
+    ></c-lwc-modal>
+
+    <!-- Create/Edit Resource -->
+    <c-lwc-modal
+        header={resourceModalHeader}
+        confirm-button-label="Save"
+        confirm-button-variant="brand"
+        validate-on-confirm
+        onbuttonclick={handleResourceModalButton}
+        class="resource-modal"
+    >
+        <div slot="body">
+            <lightning-input
+                label="Title"
+                value={resourceDraft.title}
+                required
+                maxlength="255"
+                class="slds-m-bottom_small"
+                onchange={handleResourceTitleChange}
+            ></lightning-input>
+            <lightning-input
+                label="URL"
+                type="url"
+                value={resourceDraft.link}
+                required
+                class="slds-m-bottom_small"
+                onchange={handleResourceLinkChange}
+            ></lightning-input>
+            <lightning-combobox
+                label="Type"
+                value={resourceDraft.type}
+                options={typeOptions}
+                required
+                onchange={handleResourceTypeChange}
+            ></lightning-combobox>
+        </div>
+    </c-lwc-modal>
+
+    <!-- Delete Resource -->
+    <c-lwc-modal
+        header="Delete Resource"
+        body-text={deleteResourceBodyText}
+        confirm-button-label="Delete"
+        confirm-button-variant="destructive"
+        onbuttonclick={handleDeleteResourceConfirm}
+        class="delete-resource-modal"
+    ></c-lwc-modal>
+
+</template>

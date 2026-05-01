@@ -1,0 +1,237 @@
+<template>
+    <div class="notes-view">
+
+        <!-- Loading -->
+        <template if:false={sections.data}>
+            <template if:false={sections.error}>
+                <div class="loading-state">
+                    <lightning-spinner alternative-text="Loading sections" size="medium"></lightning-spinner>
+                </div>
+            </template>
+        </template>
+
+        <!-- Error -->
+        <template if:true={sections.error}>
+            <p class="slds-text-color_error slds-p-around_medium">Failed to load sections.</p>
+        </template>
+
+        <!-- Empty state: no sections -->
+        <template if:true={hasNoSections}>
+            <div class="empty-state">
+                <lightning-icon icon-name="utility:note" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                <p class="slds-text-heading_small">No sections yet</p>
+                <p class="slds-text-color_weak slds-m-top_x-small slds-m-bottom_medium">
+                    Create a section to start organizing your notes.
+                </p>
+                <lightning-button label="Add Section" variant="brand" onclick={handleNewSection}></lightning-button>
+            </div>
+        </template>
+
+        <!-- Section cards -->
+        <template if:true={hasSections}>
+            <div class="section-grid">
+                <template for:each={sections.data} for:item="sec">
+                    <c-section-card
+                        key={sec.Id}
+                        section-id={sec.Id}
+                        section-title={sec.Title__c}
+                        is-starred={sec.isStarred}
+                        star-id={sec.starId}
+                        oneditsection={handleEditSection}
+                        ondeletesection={handleDeleteSection}
+                        onstarsection={handleStarSection}
+                    >
+                        <!-- Note items -->
+                        <template if:true={sec.notes}>
+                            <template if:true={sec.hasNotes}>
+                                <template for:each={sec.notes} for:item="note">
+                                    <div key={note.Id}>
+                                        <!-- Note header row -->
+                                        <div
+                                            class="note-item"
+                                            data-note-id={note.Id}
+                                            data-section-id={sec.Id}
+                                            onclick={handleNoteClick}
+                                        >
+                                            <lightning-icon
+                                                icon-name={note.chevronIcon}
+                                                size="x-small"
+                                                class="note-chevron"
+                                            ></lightning-icon>
+                                            <span class="note-title">{note.Title__c}</span>
+                                            <template if:true={note.hasLink}>
+                                                <span class="link-badge">Link</span>
+                                            </template>
+                                            <div class="note-actions" onclick={handleNoteActionClick}>
+                                                <lightning-button-icon
+                                                    icon-name={note.starIcon}
+                                                    variant="bare"
+                                                    size="x-small"
+                                                    title="Star"
+                                                    data-item-id={note.Id}
+                                                    onclick={handleStarToggle}
+                                                ></lightning-button-icon>
+                                                <lightning-button-icon
+                                                    icon-name="utility:edit"
+                                                    variant="bare"
+                                                    size="x-small"
+                                                    title="Edit Note"
+                                                    data-note-id={note.Id}
+                                                    data-section-id={sec.Id}
+                                                    onclick={handleEditNote}
+                                                ></lightning-button-icon>
+                                                <lightning-button-icon
+                                                    icon-name="utility:delete"
+                                                    variant="bare"
+                                                    size="x-small"
+                                                    title="Delete Note"
+                                                    data-note-id={note.Id}
+                                                    data-title={note.Title__c}
+                                                    onclick={handleDeleteNote}
+                                                ></lightning-button-icon>
+                                            </div>
+                                        </div>
+
+                                        <!-- Expanded note body -->
+                                        <template if:true={note.expanded}>
+                                            <div class="note-body">
+                                                <template if:true={note.Body__c}>
+                                                    <lightning-formatted-rich-text
+                                                        value={note.Body__c}
+                                                    ></lightning-formatted-rich-text>
+                                                </template>
+                                                <template if:false={note.Body__c}>
+                                                    <p class="no-body-text">No body content.</p>
+                                                </template>
+                                                <template if:true={note.Link__c}>
+                                                    <a
+                                                        href={note.Link__c}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        class="note-link-btn"
+                                                        onclick={handleNoteActionClick}
+                                                    >View Link →</a>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </template>
+                            <template if:false={sec.hasNotes}>
+                                <p class="empty-notes-msg">No notes yet.</p>
+                            </template>
+                        </template>
+                        <template if:false={sec.notes}>
+                            <div class="slds-p-around_small">
+                                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                            </div>
+                        </template>
+
+                        <!-- Footer action -->
+                        <lightning-button
+                            slot="footer-action"
+                            label="Add Note"
+                            variant="brand-outline"
+                            icon-name="utility:add"
+                            size="small"
+                            data-section-id={sec.Id}
+                            onclick={handleNewNote}
+                        ></lightning-button>
+                    </c-section-card>
+                </template>
+            </div>
+        </template>
+
+        <!-- Floating Add Section FAB -->
+        <template if:true={sections.data}>
+            <div class="fab-container">
+                <lightning-button
+                    label="Add Section"
+                    variant="brand"
+                    icon-name="utility:add"
+                    onclick={handleNewSection}
+                ></lightning-button>
+            </div>
+        </template>
+
+    </div>
+
+    <!-- ── Modals ─────────────────────────────────────────────────── -->
+
+    <!-- Create/Edit Section -->
+    <c-lwc-modal
+        header={sectionModalHeader}
+        confirm-button-label="Save"
+        confirm-button-variant="brand"
+        validate-on-confirm
+        onbuttonclick={handleSectionModalButton}
+        class="section-modal"
+    >
+        <div slot="body">
+            <lightning-input
+                label="Section Title"
+                value={sectionDraft.title}
+                required
+                maxlength="120"
+                onchange={handleSectionTitleChange}
+            ></lightning-input>
+        </div>
+    </c-lwc-modal>
+
+    <!-- Delete Section -->
+    <c-lwc-modal
+        header="Delete Section"
+        body-text={deleteSectionBodyText}
+        confirm-button-label="Delete"
+        confirm-button-variant="destructive"
+        onbuttonclick={handleDeleteSectionConfirm}
+        class="delete-section-modal"
+    ></c-lwc-modal>
+
+    <!-- Create/Edit Note -->
+    <c-lwc-modal
+        header={noteModalHeader}
+        confirm-button-label="Save"
+        confirm-button-variant="brand"
+        validate-on-confirm
+        onbuttonclick={handleNoteModalButton}
+        class="note-modal"
+    >
+        <div slot="body">
+            <lightning-input
+                label="Title"
+                value={noteDraft.title}
+                required
+                maxlength="120"
+                class="slds-m-bottom_small"
+                onchange={handleNoteTitleChange}
+            ></lightning-input>
+            <div class="rich-text-wrapper slds-m-bottom_small">
+                <label class="slds-form-element__label">Body</label>
+                <lightning-input-rich-text
+                    value={noteDraft.body}
+                    placeholder="Write your note here..."
+                    onchange={handleNoteBodyChange}
+                ></lightning-input-rich-text>
+            </div>
+            <lightning-input
+                label="Link (optional)"
+                value={noteDraft.link}
+                maxlength="1024"
+                placeholder="https://..."
+                onchange={handleNoteLinkChange}
+            ></lightning-input>
+        </div>
+    </c-lwc-modal>
+
+    <!-- Delete Note -->
+    <c-lwc-modal
+        header="Delete Note"
+        body-text={deleteNoteBodyText}
+        confirm-button-label="Delete"
+        confirm-button-variant="destructive"
+        onbuttonclick={handleDeleteNoteConfirm}
+        class="delete-note-modal"
+    ></c-lwc-modal>
+
+</template>
