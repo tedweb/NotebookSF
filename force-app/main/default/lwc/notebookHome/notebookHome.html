@@ -19,8 +19,8 @@
                                 <div class="group-actions">
                                     <lightning-button-icon
                                         icon-name="utility:edit"
-                                        variant="bare"
-                                        size="x-small"
+                                        variant="bare-inverse"
+                                        size="medium"
                                         title="Edit Group"
                                         data-id={grp.Id}
                                         data-name={grp.Title__c}
@@ -28,8 +28,8 @@
                                     ></lightning-button-icon>
                                     <lightning-button-icon
                                         icon-name="utility:delete"
-                                        variant="bare"
-                                        size="x-small"
+                                        variant="bare-inverse"
+                                        size="medium"
                                         title="Delete Group"
                                         data-id={grp.Id}
                                         data-name={grp.Title__c}
@@ -47,16 +47,9 @@
                 </p>
             </template>
 
-            <div class="sidebar-footer">
-                <span class="sidebar-title">Add Groups</span>
-                <lightning-button-icon
-                    icon-name="utility:add"
-                    variant="border-filled"
-                    size="small"
-                    title="New Group"
-                    onclick={handleNewGroup}
-                ></lightning-button-icon>
-            </div>
+            <button class="sidebar-footer sidebar-footer-button" onclick={handleNewGroup} title="New Group">
+                <span class="sidebar-title">Add Group</span>
+            </button>
         </aside>
 
         <!-- ── Main content area ─────────────────────────────────────── -->

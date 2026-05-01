@@ -13,8 +13,8 @@
 .sidebar {
     width: 240px;
     min-width: 200px;
-    background: var(--slds-g-color-neutral-base-100, #fff);
-    border-right: 1px solid var(--slds-g-color-border-base-1, #dddbda);
+    background: linear-gradient(180deg, #1b3a5f 0%, #0d1f3a 100%);
+    border-right: 1px solid #0d1f3a;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -33,8 +33,32 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem 1rem;
-    border-top: 1px solid var(--slds-g-color-border-base-1, #dddbda);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
     margin-top: auto;
+}
+
+.sidebar-footer-button {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: center;
+    color: #ffffff;
+}
+
+.sidebar-footer-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-footer-button:active {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-footer-button:focus {
+    outline: 2px solid var(--slds-g-color-brand-base-60, #0176d3);
+    outline-offset: -2px;
 }
 
 .sidebar-title {
@@ -42,7 +66,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--slds-g-color-neutral-base-50, #706e6b);
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .group-list {
@@ -62,15 +86,17 @@
     border-radius: 0.25rem;
     margin: 0 0.25rem;
     position: relative;
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .group-item:hover {
-    background: var(--slds-g-color-neutral-base-95, #f3f3f3);
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
 }
 
 .group-item.selected {
-    background: var(--slds-g-color-brand-base-95, #e8f4ff);
-    color: var(--slds-g-color-brand-base-50, #0176d3);
+    background: rgba(74, 144, 226, 0.3);
+    color: #ffffff;
     font-weight: 600;
 }
 
@@ -81,11 +107,12 @@
     white-space: nowrap;
     flex: 1;
     min-width: 0;
+    color: inherit;
 }
 
 .group-actions {
     display: none;
-    gap: 0.125rem;
+    gap: 0.5rem;
     flex-shrink: 0;
 }
 
@@ -96,6 +123,7 @@
 .empty-sidebar {
     padding: 1rem;
     text-align: center;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 /* ── Main content ────────────────────────────────────────────────── */
