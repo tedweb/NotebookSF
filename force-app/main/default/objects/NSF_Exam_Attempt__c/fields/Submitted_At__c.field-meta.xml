@@ -3,5 +3,6 @@
     <fullName>Submitted_At__c</fullName>
     <label>Submitted At</label>
     <required>false</required>
+    <trackTrending>false</trackTrending>
     <type>DateTime</type>
 </CustomField>

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>NSF_ExamId__c</fullName>
+    <deleteConstraint>Restrict</deleteConstraint>
     <label>Exam Question</label>
     <referenceTo>NSF_Exam__c</referenceTo>
     <relationshipLabel>Exam Attempts</relationshipLabel>
     <relationshipName>NSF_Exam_Attempts</relationshipName>
-    <deleteConstraint>Restrict</deleteConstraint>
     <required>true</required>
+    <trackTrending>false</trackTrending>
     <type>Lookup</type>
 </CustomField>

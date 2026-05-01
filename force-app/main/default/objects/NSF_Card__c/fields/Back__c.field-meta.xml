@@ -3,6 +3,7 @@
     <fullName>Back__c</fullName>
     <label>Back</label>
     <length>131072</length>
+    <trackTrending>false</trackTrending>
     <type>LongTextArea</type>
     <visibleLines>10</visibleLines>
 </CustomField>

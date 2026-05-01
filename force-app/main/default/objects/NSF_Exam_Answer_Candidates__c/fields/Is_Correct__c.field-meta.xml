@@ -3,5 +3,6 @@
     <fullName>Is_Correct__c</fullName>
     <defaultValue>false</defaultValue>
     <label>Is Correct</label>
+    <trackTrending>false</trackTrending>
     <type>Checkbox</type>
 </CustomField>

@@ -5,6 +5,9 @@
     <referenceTo>NSF_Card__c</referenceTo>
     <relationshipLabel>Resource Cards</relationshipLabel>
     <relationshipName>NSF_Resource_Cards</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
     <reparentableMasterDetail>true</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
     <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
 </CustomField>

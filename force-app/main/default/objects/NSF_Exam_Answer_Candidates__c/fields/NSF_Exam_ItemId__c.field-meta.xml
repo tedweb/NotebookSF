@@ -5,5 +5,9 @@
     <referenceTo>NSF_Exam__c</referenceTo>
     <relationshipLabel>Answer Candidates</relationshipLabel>
     <relationshipName>NSF_Answer_Candidates</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
     <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
 </CustomField>

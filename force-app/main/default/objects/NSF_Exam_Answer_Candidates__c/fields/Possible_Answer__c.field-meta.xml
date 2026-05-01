@@ -3,6 +3,7 @@
     <fullName>Possible_Answer__c</fullName>
     <label>Possible Answer</label>
     <length>1024</length>
+    <trackTrending>false</trackTrending>
     <type>LongTextArea</type>
     <visibleLines>3</visibleLines>
 </CustomField>

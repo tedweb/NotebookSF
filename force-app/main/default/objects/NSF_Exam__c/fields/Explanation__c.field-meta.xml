@@ -3,6 +3,7 @@
     <fullName>Explanation__c</fullName>
     <label>Explanation</label>
     <length>1024</length>
+    <trackTrending>false</trackTrending>
     <type>LongTextArea</type>
     <visibleLines>3</visibleLines>
 </CustomField>

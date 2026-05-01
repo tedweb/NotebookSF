@@ -203,7 +203,7 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         }
     }
 
-    handleSelectGroup(evt) {
+    async handleSelectGroup(evt) {
         const id = evt.currentTarget.dataset.id;
         if (this.selectedGroupId === id) return;
         this.selectedGroupId = id;
@@ -212,6 +212,16 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         this.projectNotebooks = {};
         // Re-map to update selected class
         this._applyGroupWireResult(this._wiredGroups);
+        // Refresh projects wire so project list updates immediately for the selected group
+        if (this._wiredProjects) {
+            try {
+                await refreshApex(this._wiredProjects);
+            } catch (e) {
+                // Non-fatal: log and continue
+                // eslint-disable-next-line no-console
+                console.warn('Failed to refresh projects after selecting group', e);
+            }
+        }
     }
 
     // ── Project handlers ─────────────────────────────────────────────
@@ -270,7 +280,9 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         }
         try {
             await deleteProject({ projectId: this.deleteProjectTarget.id });
-            const { [this.deleteProjectTarget.id]: _removed, ...rest } = this.projectNotebooks;
+            // Remove the deleted project's notebooks entry without creating an unused variable
+            const rest = { ...this.projectNotebooks };
+            delete rest[this.deleteProjectTarget.id];
             this.projectNotebooks = rest;
             const nextSet = new Set(this.expandedProjectIds);
             nextSet.delete(this.deleteProjectTarget.id);
@@ -309,7 +321,10 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
             const nbs = await getNotebooksByProject({ projectId });
             this.projectNotebooks = { ...this.projectNotebooks, [projectId]: nbs };
             this.refreshProjectList();
-        } catch (e) {
+        } catch (err) {
+            // Non-fatal: log for diagnostics and preserve original behavior
+            // eslint-disable-next-line no-console
+            console.debug('loadNotebooks error', err);
             this.showToast('Error', 'Failed to load notebooks.', 'error');
         }
     }
@@ -332,7 +347,6 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
     handleNewNotebook(evt) {
         evt.stopPropagation();
         const projectId = evt.currentTarget.dataset.projectId;
-        const projectName = evt.currentTarget.dataset.projectName;
         this.notebookDraft = { id: null, name: '', projectId };
         this.notebookModalMode = 'create';
         this.notebookModal.open();

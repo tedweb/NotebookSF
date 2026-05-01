@@ -3,6 +3,7 @@
     <fullName>Front__c</fullName>
     <label>Front</label>
     <length>16448</length>
+    <trackTrending>false</trackTrending>
     <type>LongTextArea</type>
     <visibleLines>5</visibleLines>
 </CustomField>

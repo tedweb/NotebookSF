@@ -328,7 +328,7 @@
 
     <!-- ── Tab Visibility ────────────────────────────────────────── -->
     <tabSettings>
-        <tab>Notebook_Home</tab>
+        <tab>Home</tab>
         <visibility>Visible</visibility>
     </tabSettings>
 </PermissionSet>

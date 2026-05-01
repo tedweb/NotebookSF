@@ -5,6 +5,9 @@
     <referenceTo>NSF_Exam__c</referenceTo>
     <relationshipLabel>Resource Exams</relationshipLabel>
     <relationshipName>NSF_Resource_Exams</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
     <reparentableMasterDetail>true</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
     <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
 </CustomField>

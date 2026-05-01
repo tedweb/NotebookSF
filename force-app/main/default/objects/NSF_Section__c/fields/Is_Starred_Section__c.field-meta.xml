@@ -3,5 +3,6 @@
     <fullName>Is_Starred_Section__c</fullName>
     <defaultValue>false</defaultValue>
     <label>Is Starred Section</label>
+    <trackTrending>false</trackTrending>
     <type>Checkbox</type>
 </CustomField>
