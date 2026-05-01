@@ -3,17 +3,6 @@
 
         <!-- ── Left sidebar: Group list ─────────────────────────────── -->
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <span class="sidebar-title">Groups</span>
-                <lightning-button-icon
-                    icon-name="utility:add"
-                    variant="border-filled"
-                    size="small"
-                    title="New Group"
-                    onclick={handleNewGroup}
-                ></lightning-button-icon>
-            </div>
-
             <template if:true={groups.data}>
                 <template if:false={hasGroups}>
                     <div class="empty-sidebar">
@@ -68,6 +57,17 @@
                     Failed to load groups.
                 </p>
             </template>
+
+            <div class="sidebar-header">
+                <span class="sidebar-title">Add Groups</span>
+                <lightning-button-icon
+                    icon-name="utility:add"
+                    variant="border-filled"
+                    size="small"
+                    title="New Group"
+                    onclick={handleNewGroup}
+                ></lightning-button-icon>
+            </div>
         </aside>
 
         <!-- ── Main content area ─────────────────────────────────────── -->
