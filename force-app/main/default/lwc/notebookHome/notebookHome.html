@@ -4,17 +4,6 @@
         <!-- ── Left sidebar: Group list ─────────────────────────────── -->
         <aside class="sidebar">
             <template if:true={groups.data}>
-                <template if:false={hasGroups}>
-                    <div class="empty-sidebar">
-                        <p class="slds-text-color_weak slds-text-body_small">No groups yet.</p>
-                        <lightning-button
-                            label="New Group"
-                            variant="brand-outline"
-                            size="small"
-                            onclick={handleNewGroup}
-                        ></lightning-button>
-                    </div>
-                </template>
                 <template if:true={hasGroups}>
                     <ul class="group-list" role="listbox" aria-label="Groups">
                         <template for:each={groups.data} for:item="grp">
@@ -58,7 +47,7 @@
                 </p>
             </template>
 
-            <div class="sidebar-header">
+            <div class="sidebar-footer">
                 <span class="sidebar-title">Add Groups</span>
                 <lightning-button-icon
                     icon-name="utility:add"
