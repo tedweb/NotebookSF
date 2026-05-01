@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
-    <defaultLandingTab>Notebook_Home</defaultLandingTab>
     <description>NotebookSF — Research and note-taking assistant built on the Salesforce platform.</description>
+    <formFactors>Large</formFactors>
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
-    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavPersonalizationDisabled>true</isNavPersonalizationDisabled>
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
     <label>Notebook Console</label>
     <navType>Console</navType>
-    <tabs>Notebook_Home</tabs>
+    <setupExperience>all</setupExperience>
+    <tabs>Home</tabs>
     <uiType>Lightning</uiType>
-    <formFactors>Large</formFactors>
+    <workspaceConfig>
+        <mappings>
+            <tab>Home</tab>
+        </mappings>
+    </workspaceConfig>
 </CustomApplication>
