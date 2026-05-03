@@ -46,3 +46,15 @@ $RECYCLE.BIN/
 **/__pycache__/
 **/.venv/
 **/venv/
+
+
+# Temp ignores until .env file can be implemented
+force-app/main/default/callCenters
+force-app/main/default/digitalExperiences
+force-app/main/default/experiences
+force-app/main/default/permissionsetgroups
+force-app/main/default/remoteSiteSettings
+force-app/main/default/staticresources
+.mcp.json
+.claude
+

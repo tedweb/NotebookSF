@@ -32,7 +32,7 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
     deleteGroupTarget = { id: null, name: '' };
 
     // Project modal
-    @track projectDraft = { id: null, name: '', groupId: null };
+    @track projectDraft = { id: null, name: '', groupId: null, associatedRecordId: null };
     projectModalMode = 'create';
 
     // Project delete
@@ -250,6 +250,13 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
 
     handleProjectNameChange(evt) {
         this.projectDraft = { ...this.projectDraft, name: evt.detail.value };
+    }
+
+    // Handler for lightning-record-picker selection in the project modal
+    handleProjectRecordPick(evt) {
+        // The lightning-record-picker returns the selected record id in evt.detail.selectedRecordId
+        const selectedId = evt.detail && evt.detail.selectedRecordId ? evt.detail.selectedRecordId : null;
+        this.projectDraft = { ...this.projectDraft, associatedRecordId: selectedId };
     }
 
     async handleProjectModalButton(evt) {

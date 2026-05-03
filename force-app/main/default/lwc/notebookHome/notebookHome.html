@@ -275,6 +275,16 @@
                 maxlength="80"
                 onchange={handleProjectNameChange}
             ></lightning-input>
+
+            <!-- Record picker for associating a related record (e.g., Owner or Parent Account) -->
+            <div class="slds-m-top_small">
+                <lightning-record-picker
+                    label="Associate Record"
+                    placeholder="Search records"
+                    onselect={handleProjectRecordPick}
+                    data-id="project-record-picker"
+                ></lightning-record-picker>
+            </div>
         </div>
     </c-lwc-modal>
 

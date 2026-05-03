@@ -1,4 +1,4 @@
-import { createElement } from 'lwc';
+import { createElement } from '@lwc/engine-dom';
 import NotebookAiChat from 'c/notebookAiChat';
 import sendMessage from '@salesforce/apex/NSFChatController.sendMessage';
 

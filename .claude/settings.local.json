@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(sf project *)",
-      "Read(//Users/tgodwin/Documents/NotebookSF/NotebookSF v.01 using Claude/force-app/main/default/lwc/**)",
-      "Read(//Users/tgodwin/Documents/NotebookSF/NotebookSF v.01 using Claude/force-app/main/default/**)"
-    ]
-  }
-}

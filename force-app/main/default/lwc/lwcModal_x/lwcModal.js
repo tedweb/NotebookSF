@@ -270,7 +270,7 @@ export default class LwcModal extends LightningElement {
     }
 
     // Single event handler for any standard and custom buttons in the modal's footer
-    handleButtonClick = (event) => {
+    handleButtonClick(event) {
         let buttonValue = event.currentTarget.value;
         if (buttonValue === CONFIRM && this.validateOnConfirm && !this.validate()) {
             return null; // Validation failed
