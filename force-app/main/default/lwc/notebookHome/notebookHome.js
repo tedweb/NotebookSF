@@ -114,6 +114,9 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
     get projectModalHeader() {
         return this.projectModalMode === 'edit' ? 'Edit Project' : 'New Project';
     }
+    get groupPickerDisplayInfo() {
+        return { primaryField: 'Title__c' };
+    }
     get notebookModalHeader() {
         return this.notebookModalMode === 'edit' ? 'Edit Notebook' : 'New Notebook';
     }
@@ -229,6 +232,7 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         this.projectDraft = { id: null, name: '', groupId: this.selectedGroupId };
         this.projectModalMode = 'create';
         this.projectModal.open();
+        this._focusProjectNameInput();
     }
 
     handleEditProject(evt) {
@@ -240,6 +244,15 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         };
         this.projectModalMode = 'edit';
         this.projectModal.open();
+        this._focusProjectNameInput();
+    }
+
+    _focusProjectNameInput() {
+        // eslint-disable-next-line @lwc/lwc/no-async-operation
+        requestAnimationFrame(() => {
+            const input = this.template.querySelector('[data-id="project-name-input"]');
+            if (input) input.focus();
+        });
     }
 
     handleDeleteProject(evt) {
@@ -250,6 +263,12 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
 
     handleProjectNameChange(evt) {
         this.projectDraft = { ...this.projectDraft, name: evt.detail.value };
+    }
+
+    handleProjectNameKeydown(evt) {
+        if (evt.key === 'Enter') {
+            this.handleProjectModalButton({ detail: 'confirm' });
+        }
     }
 
     // Handler for lightning-record-picker selection in the project modal

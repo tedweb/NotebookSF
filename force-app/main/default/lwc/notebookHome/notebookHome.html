@@ -270,19 +270,25 @@
         <div>
             <lightning-input
                 label="Project Name"
+                data-id="project-name-input"
                 value={projectDraft.name}
                 required
                 maxlength="80"
                 onchange={handleProjectNameChange}
+                onkeydown={handleProjectNameKeydown}
             ></lightning-input>
 
             <!-- Record picker for associating a related record (e.g., Owner or Parent Account) -->
             <div class="slds-m-top_small">
                 <lightning-record-picker
-                    label="Associate Record"
-                    placeholder="Search records"
+                    label="Group"
+                    data-name="selectedGroupName"
+                    placeholder="Search groups..."
+                    object-api-name="NSF_Group__c"
+                    value={selectedGroupId}
+                    display-info={groupPickerDisplayInfo}
                     onselect={handleProjectRecordPick}
-                    data-id="project-record-picker"
+                    required
                 ></lightning-record-picker>
             </div>
         </div>
