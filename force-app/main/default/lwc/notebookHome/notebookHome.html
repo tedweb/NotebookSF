@@ -1,11 +1,11 @@
 <template>
     <div class="notebook-home">
 
-        <!-- ── Left sidebar: Group list ─────────────────────────────── -->
+        <!-- ── Left sidebar: Section list ─────────────────────────────── -->
         <aside class="sidebar">
             <template if:true={groups.data}>
                 <template if:true={hasGroups}>
-                    <ul class="group-list" role="listbox" aria-label="Groups">
+                    <ul class="group-list" role="listbox" aria-label="Sections">
                         <template for:each={groups.data} for:item="grp">
                             <li
                                 key={grp.Id}
@@ -21,7 +21,7 @@
                                         icon-name="utility:edit"
                                         variant="bare-inverse"
                                         size="medium"
-                                        title="Edit Group"
+                                        title="Edit Section"
                                         data-id={grp.Id}
                                         data-name={grp.Title__c}
                                         onclick={handleEditGroup}
@@ -30,7 +30,7 @@
                                         icon-name="utility:delete"
                                         variant="bare-inverse"
                                         size="medium"
-                                        title="Delete Group"
+                                        title="Delete Section"
                                         data-id={grp.Id}
                                         data-name={grp.Title__c}
                                         onclick={handleDeleteGroup}
@@ -43,36 +43,36 @@
             </template>
             <template if:true={groups.error}>
                 <p class="slds-text-color_error slds-p-around_small slds-text-body_small">
-                    Failed to load groups.
+                    Failed to load sections.
                 </p>
             </template>
 
-            <button class="sidebar-footer sidebar-footer-button" onclick={handleNewGroup} title="New Group">
-                <span class="sidebar-title">Add Group</span>
+            <button class="sidebar-footer sidebar-footer-button" onclick={handleNewGroup} title="Add Section">
+                <span class="sidebar-title">Add Section</span>
             </button>
         </aside>
 
         <!-- ── Main content area ─────────────────────────────────────── -->
         <main class="main-content">
 
-            <!-- No group selected splash -->
+            <!-- No section selected splash -->
             <template if:false={selectedGroupId}>
                 <div class="splash">
                     <lightning-icon icon-name="standard:knowledge" size="large"></lightning-icon>
                     <h1 class="slds-text-heading_large slds-m-top_medium">NotebookSF</h1>
                     <p class="slds-text-color_weak slds-m-top_small">
-                        Select a group from the sidebar, or create a new group to get started.
+                        Select a section from the sidebar, or add a new section to get started.
                     </p>
-                    <lightning-button
-                        label="New Group"
+                    <!-- <lightning-button
+                        label="Add Section"
                         variant="brand"
                         class="slds-m-top_medium"
                         onclick={handleNewGroup}
-                    ></lightning-button>
+                    ></lightning-button> -->
                 </div>
             </template>
 
-            <!-- Group selected: projects + notebooks -->
+            <!-- Section selected: projects + notebooks -->
             <template if:true={selectedGroupId}>
 
                 <template if:true={projects.data}>
@@ -81,13 +81,14 @@
                     <template if:false={hasProjects}>
                         <div class="empty-main">
                             <lightning-icon icon-name="utility:open_folder" size="large" class="slds-m-bottom_medium"></lightning-icon>
-                            <p class="slds-text-heading_small">No projects in this group</p>
+                            <p class="slds-text-heading_small">No projects in this section</p>
                             <p class="slds-text-color_weak slds-m-top_x-small slds-m-bottom_medium">
                                 Create a project to start organizing your notebooks.
                             </p>
                             <lightning-button
-                                label="New Project"
+                                label="Add Topic"
                                 variant="brand"
+                                class="sidebar-action-btn"
                                 onclick={handleNewProject}
                             ></lightning-button>
                         </div>
@@ -99,47 +100,36 @@
                             <template for:each={projects.data} for:item="proj">
                                 <div key={proj.Id} class="project-block">
                                     <!-- Project row -->
-                                    <div class="project-row" data-id={proj.Id} onclick={handleToggleProject}>
-                                        <lightning-icon
-                                            icon-name={proj.chevronIcon}
-                                            size="x-small"
-                                            class="chevron-icon"
-                                        ></lightning-icon>
+                                    <div class="project-row">
                                         <span class="project-name">{proj.Title__c}</span>
                                         <div class="project-actions" onclick={handleProjectActionClick}>
-                                            <lightning-button-icon
-                                                icon-name="utility:add"
-                                                variant="bare"
-                                                size="x-small"
-                                                title="New Notebook"
-                                                data-project-id={proj.Id}
-                                                data-project-name={proj.Title__c}
-                                                onclick={handleNewNotebook}
-                                            ></lightning-button-icon>
-                                            <lightning-button-icon
-                                                icon-name="utility:edit"
-                                                variant="bare"
-                                                size="x-small"
-                                                title="Edit Project"
-                                                data-id={proj.Id}
-                                                data-name={proj.Title__c}
-                                                onclick={handleEditProject}
-                                            ></lightning-button-icon>
-                                            <lightning-button-icon
-                                                icon-name="utility:delete"
-                                                variant="bare"
-                                                size="x-small"
-                                                title="Delete Project"
-                                                data-id={proj.Id}
-                                                data-name={proj.Title__c}
-                                                onclick={handleDeleteProject}
-                                            ></lightning-button-icon>
+                                            <span class="card-icon-btn">
+                                                <lightning-button-icon
+                                                    icon-name="utility:edit"
+                                                    variant="bare"
+                                                    size="medium"
+                                                    title="Edit Project"
+                                                    data-id={proj.Id}
+                                                    data-name={proj.Title__c}
+                                                    onclick={handleEditProject}
+                                                ></lightning-button-icon>
+                                            </span>
+                                            <span class="card-icon-btn">
+                                                <lightning-button-icon
+                                                    icon-name="utility:delete"
+                                                    variant="bare"
+                                                    size="medium"
+                                                    title="Delete Project"
+                                                    data-id={proj.Id}
+                                                    data-name={proj.Title__c}
+                                                    onclick={handleDeleteProject}
+                                                ></lightning-button-icon>
+                                            </span>
                                         </div>
                                     </div>
 
                                     <!-- Notebook list under project -->
-                                    <template if:true={proj.expanded}>
-                                        <div class="notebook-list" data-project-id={proj.Id}>
+                                    <div class="notebook-list" data-project-id={proj.Id}>
                                             <template if:true={proj.notebooks}>
                                                 <template for:each={proj.notebooks} for:item="nb">
                                                     <div
@@ -150,17 +140,19 @@
                                                         data-project-id={proj.Id}
                                                         onclick={handleOpenNotebook}
                                                     >
-                                                        <lightning-icon
-                                                            icon-name="standard:document"
-                                                            size="x-small"
+                                                        <img
+                                                            src={notebookIconUrl}
+                                                            width="24"
+                                                            height="24"
+                                                            alt="Notebook"
                                                             class="notebook-icon"
-                                                        ></lightning-icon>
+                                                        />
                                                         <span class="notebook-name">{nb.Title__c}</span>
                                                         <div class="notebook-actions" onclick={handleNotebookActionClick}>
                                                             <lightning-button-icon
                                                                 icon-name="utility:edit"
                                                                 variant="bare"
-                                                                size="x-small"
+                                                                size="medium"
                                                                 title="Edit Notebook"
                                                                 data-id={nb.Id}
                                                                 data-name={nb.Title__c}
@@ -170,7 +162,7 @@
                                                             <lightning-button-icon
                                                                 icon-name="utility:delete"
                                                                 variant="bare"
-                                                                size="x-small"
+                                                                size="medium"
                                                                 title="Delete Notebook"
                                                                 data-id={nb.Id}
                                                                 data-name={nb.Title__c}
@@ -180,16 +172,8 @@
                                                     </div>
                                                 </template>
                                                 <template if:false={proj.hasNotebooks}>
-                                                    <div class="empty-notebooks">
+                                                    <div class="empty-notebooks-msg">
                                                         <p class="slds-text-color_weak slds-text-body_small">No notebooks.</p>
-                                                        <lightning-button
-                                                            label="New Notebook"
-                                                            variant="brand-outline"
-                                                            size="small"
-                                                            data-project-id={proj.Id}
-                                                            data-project-name={proj.Title__c}
-                                                            onclick={handleNewNotebook}
-                                                        ></lightning-button>
                                                     </div>
                                                 </template>
                                             </template>
@@ -199,7 +183,15 @@
                                                 </div>
                                             </template>
                                         </div>
-                                    </template>
+                                        <div class="project-card-footer">
+                                            <button
+                                                class="notebook-add-btn"
+                                                title="New Notebook"
+                                                data-project-id={proj.Id}
+                                                data-project-name={proj.Title__c}
+                                                onclick={handleNewNotebook}
+                                            >Add Notebook</button>
+                                        </div>
                                 </div>
                             </template>
                         </div>
@@ -214,21 +206,23 @@
 
         <!-- ── Floating Add Project button ───────────────────────────── -->
         <template if:true={selectedGroupId}>
+            <template if:true={hasProjects}>
             <div class="fab-container">
                 <lightning-button
-                    label="New Project"
+                    label="Add Topic"
                     variant="brand"
-                    icon-name="utility:add"
+                    class="sidebar-action-btn"
                     onclick={handleNewProject}
                 ></lightning-button>
             </div>
+            </template>
         </template>
 
     </div>
 
     <!-- ── Modals ────────────────────────────────────────────────────── -->
 
-    <!-- Create/Edit Group -->
+    <!-- Create/Edit Section -->
     <c-lwc-modal
         header={groupModalHeader}
         confirm-button-label="Save"
@@ -239,7 +233,7 @@
     >
         <div>
             <lightning-input
-                label="Group Name"
+                label="Section Name"
                 value={groupDraft.name}
                 required
                 maxlength="80"
@@ -248,9 +242,9 @@
         </div>
     </c-lwc-modal>
 
-    <!-- Delete Group confirmation -->
+    <!-- Delete Section confirmation -->
     <c-lwc-modal
-        header="Delete Group"
+        header="Delete Section"
         body-text={deleteGroupBodyText}
         confirm-button-label="Delete"
         confirm-button-variant="destructive"
@@ -281,9 +275,9 @@
             <!-- Record picker for associating a related record (e.g., Owner or Parent Account) -->
             <div class="slds-m-top_small">
                 <lightning-record-picker
-                    label="Group"
+                    label="Section"
                     data-name="selectedGroupName"
-                    placeholder="Search groups..."
+                    placeholder="Search sections..."
                     object-api-name="NSF_Group__c"
                     value={selectedGroupId}
                     display-info={groupPickerDisplayInfo}

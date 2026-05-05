@@ -1,6 +1,7 @@
 import { LightningElement, wire, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin } from 'lightning/navigation';
+import notebookIcon from '@salesforce/resourceUrl/notebook_icon';
 import { refreshApex } from '@salesforce/apex';
 import getGroups from '@salesforce/apex/NSFGroupController.getGroups';
 import createGroup from '@salesforce/apex/NSFGroupController.createGroup';
@@ -17,11 +18,12 @@ import deleteNotebook from '@salesforce/apex/NSFNotebookController.deleteNoteboo
 
 export default class NotebookHome extends NavigationMixin(LightningElement) {
 
+    notebookIconUrl = notebookIcon;
+
     // ── State ────────────────────────────────────────────────────────
     selectedGroupId = null;
     selectedGroupName = '';
 
-    @track expandedProjectIds = new Set();
     @track projectNotebooks = {}; // { [projectId]: NSF_Notebook__c[] | null }
 
     // Group modal
@@ -91,13 +93,16 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
             this.projects = {
                 data: result.data.map(p => ({
                     ...p,
-                    expanded: this.expandedProjectIds.has(p.Id),
-                    chevronIcon: this.expandedProjectIds.has(p.Id) ? 'utility:chevrondown' : 'utility:chevronright',
                     notebooks: this.projectNotebooks[p.Id] ?? null,
                     hasNotebooks: (this.projectNotebooks[p.Id] ?? []).length > 0
                 })),
                 error: null
             };
+            result.data.forEach(p => {
+                if (!this.projectNotebooks[p.Id]) {
+                    this.loadNotebooks(p.Id);
+                }
+            });
         } else {
             this.projects = { data: result.data, error: result.error };
         }
@@ -109,16 +114,16 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
 
     // ── Modal header labels ──────────────────────────────────────────
     get groupModalHeader() {
-        return this.groupModalMode === 'edit' ? 'Edit Group' : 'New Group';
+        return this.groupModalMode === 'edit' ? 'Edit Group' : 'Add Group';
     }
     get projectModalHeader() {
-        return this.projectModalMode === 'edit' ? 'Edit Project' : 'New Project';
+        return this.projectModalMode === 'edit' ? 'Edit Project' : 'Add Project';
     }
     get groupPickerDisplayInfo() {
         return { primaryField: 'Title__c' };
     }
     get notebookModalHeader() {
-        return this.notebookModalMode === 'edit' ? 'Edit Notebook' : 'New Notebook';
+        return this.notebookModalMode === 'edit' ? 'Edit Notebook' : 'Add Notebook';
     }
     get deleteGroupBodyText() {
         return `Delete "${this.deleteGroupTarget.name}" and all its projects and notebooks? This cannot be undone.`;
@@ -211,7 +216,6 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         if (this.selectedGroupId === id) return;
         this.selectedGroupId = id;
         this.selectedGroupName = evt.currentTarget.querySelector('.group-name').textContent.trim();
-        this.expandedProjectIds = new Set();
         this.projectNotebooks = {};
         // Re-map to update selected class
         this._applyGroupWireResult(this._wiredGroups);
@@ -310,30 +314,12 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
             const rest = { ...this.projectNotebooks };
             delete rest[this.deleteProjectTarget.id];
             this.projectNotebooks = rest;
-            const nextSet = new Set(this.expandedProjectIds);
-            nextSet.delete(this.deleteProjectTarget.id);
-            this.expandedProjectIds = nextSet;
             this.deleteProjectModal.close();
             this.showToast('Project deleted', '', 'success');
             await refreshApex(this._wiredProjects);
         } catch (e) {
             this.showToast('Error', this.extractError(e), 'error');
         }
-    }
-
-    handleToggleProject(evt) {
-        const id = evt.currentTarget.dataset.id;
-        const next = new Set(this.expandedProjectIds);
-        if (next.has(id)) {
-            next.delete(id);
-        } else {
-            next.add(id);
-            if (!this.projectNotebooks[id]) {
-                this.loadNotebooks(id);
-            }
-        }
-        this.expandedProjectIds = next;
-        this.refreshProjectList();
     }
 
     handleProjectActionClick(evt) {
@@ -360,8 +346,6 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         this.projects = {
             data: this.projects.data.map(p => ({
                 ...p,
-                expanded: this.expandedProjectIds.has(p.Id),
-                chevronIcon: this.expandedProjectIds.has(p.Id) ? 'utility:chevrondown' : 'utility:chevronright',
                 notebooks: this.projectNotebooks[p.Id] ?? null,
                 hasNotebooks: (this.projectNotebooks[p.Id] ?? []).length > 0
             })),
@@ -435,8 +419,7 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         }
         try {
             await deleteNotebook({ notebookId: this.deleteNotebookTarget.id });
-            // Refresh all expanded project notebook lists that might contain this notebook
-            const refreshPromises = [...this.expandedProjectIds].map(pid =>
+            const refreshPromises = Object.keys(this.projectNotebooks).map(pid =>
                 getNotebooksByProject({ projectId: pid }).then(nbs => {
                     this.projectNotebooks = { ...this.projectNotebooks, [pid]: nbs };
                 })
