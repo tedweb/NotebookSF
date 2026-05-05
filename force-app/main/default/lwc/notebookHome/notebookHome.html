@@ -310,11 +310,24 @@
         <div>
             <lightning-input
                 label="Notebook Name"
+                data-id="notebook-name-input"
                 value={notebookDraft.name}
                 required
                 maxlength="80"
                 onchange={handleNotebookNameChange}
+                onkeydown={handleNotebookNameKeydown}
             ></lightning-input>
+            <div class="slds-m-top_small">
+                <lightning-record-picker
+                    label="Project"
+                    placeholder="Search projects..."
+                    object-api-name="NSF_Project__c"
+                    value={notebookDraft.projectId}
+                    display-info={projectPickerDisplayInfo}
+                    onselect={handleNotebookRecordPick}
+                    required
+                ></lightning-record-picker>
+            </div>
         </div>
     </c-lwc-modal>
 

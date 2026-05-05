@@ -122,6 +122,9 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
     get groupPickerDisplayInfo() {
         return { primaryField: 'Title__c' };
     }
+    get projectPickerDisplayInfo() {
+        return { primaryField: 'Title__c' };
+    }
     get notebookModalHeader() {
         return this.notebookModalMode === 'edit' ? 'Edit Notebook' : 'Add Notebook';
     }
@@ -360,6 +363,7 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         this.notebookDraft = { id: null, name: '', projectId };
         this.notebookModalMode = 'create';
         this.notebookModal.open();
+        this._focusNotebookNameInput();
     }
 
     handleEditNotebook(evt) {
@@ -371,6 +375,15 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         };
         this.notebookModalMode = 'edit';
         this.notebookModal.open();
+        this._focusNotebookNameInput();
+    }
+
+    _focusNotebookNameInput() {
+        // eslint-disable-next-line @lwc/lwc/no-async-operation
+        requestAnimationFrame(() => {
+            const input = this.template.querySelector('[data-id="notebook-name-input"]');
+            if (input) input.focus();
+        });
     }
 
     handleDeleteNotebook(evt) {
@@ -381,6 +394,17 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
 
     handleNotebookNameChange(evt) {
         this.notebookDraft = { ...this.notebookDraft, name: evt.detail.value };
+    }
+
+    handleNotebookNameKeydown(evt) {
+        if (evt.key === 'Enter' && this.notebookDraft.name.trim()) {
+            this.handleNotebookModalButton({ detail: 'confirm' });
+        }
+    }
+
+    handleNotebookRecordPick(evt) {
+        const selectedId = evt.detail && evt.detail.selectedRecordId ? evt.detail.selectedRecordId : null;
+        this.notebookDraft = { ...this.notebookDraft, projectId: selectedId };
     }
 
     handleNotebookActionClick(evt) {
