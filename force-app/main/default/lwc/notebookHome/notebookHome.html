@@ -234,10 +234,12 @@
         <div>
             <lightning-input
                 label="Section Name"
+                data-id="group-name-input"
                 value={groupDraft.name}
                 required
                 maxlength="80"
                 onchange={handleGroupNameChange}
+                onkeydown={handleGroupNameKeydown}
             ></lightning-input>
         </div>
     </c-lwc-modal>

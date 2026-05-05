@@ -151,6 +151,7 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         this.groupDraft = { id: null, name: '' };
         this.groupModalMode = 'create';
         this.groupModal.open();
+        this._focusGroupNameInput();
     }
 
     handleEditGroup(evt) {
@@ -158,6 +159,15 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         this.groupDraft = { id: evt.currentTarget.dataset.id, name: evt.currentTarget.dataset.name };
         this.groupModalMode = 'edit';
         this.groupModal.open();
+        this._focusGroupNameInput();
+    }
+
+    _focusGroupNameInput() {
+        // eslint-disable-next-line @lwc/lwc/no-async-operation
+        requestAnimationFrame(() => {
+            const input = this.template.querySelector('[data-id="group-name-input"]');
+            if (input) input.focus();
+        });
     }
 
     handleDeleteGroup(evt) {
@@ -168,6 +178,12 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
 
     handleGroupNameChange(evt) {
         this.groupDraft = { ...this.groupDraft, name: evt.detail.value };
+    }
+
+    handleGroupNameKeydown(evt) {
+        if (evt.key === 'Enter' && this.groupDraft.name.trim()) {
+            this.handleGroupModalButton({ detail: 'confirm' });
+        }
     }
 
     async handleGroupModalButton(evt) {
