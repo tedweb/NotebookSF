@@ -1,6 +1,7 @@
 import { LightningElement, wire, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin } from 'lightning/navigation';
+import { openTab } from 'lightning/platformWorkspaceApi';
 import notebookIcon from '@salesforce/resourceUrl/notebook_icon';
 import { refreshApex } from '@salesforce/apex';
 import getGroups from '@salesforce/apex/NSFGroupController.getGroups';
@@ -473,21 +474,25 @@ export default class NotebookHome extends NavigationMixin(LightningElement) {
         }
     }
 
-    handleOpenNotebook(evt) {
+    async handleOpenNotebook(evt) {
         // Prevent edit/delete button clicks from opening the notebook
         if (evt.target.closest('.notebook-actions')) return;
         const notebookId = evt.currentTarget.dataset.notebookId;
         const notebookName = evt.currentTarget.dataset.notebookName;
-        this[NavigationMixin.Navigate]({
-            type: 'standard__navItemPage',
-            attributes: {
-                apiName: 'NSF_Notebook_View'
-            },
-            state: {
-                c__notebookId: notebookId,
-                c__notebookName: notebookName
-            }
-        });
+        try {
+            await openTab({
+                pageReference: {
+                    type: 'standard__navItemPage',
+                    attributes: { apiName: 'NSF_Notebook_View' },
+                    state: { c__notebookId: notebookId, c__notebookName: notebookName }
+                },
+                label: notebookName,
+                icon: 'standard:document',
+                focus: true
+            });
+        } catch (e) {
+            this.showToast('Error', 'Could not open notebook.', 'error');
+        }
     }
 
     // ── Utilities ────────────────────────────────────────────────────

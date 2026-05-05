@@ -10,10 +10,14 @@
     <navType>Console</navType>
     <setupExperience>all</setupExperience>
     <tabs>Home</tabs>
+    <tabs>NSF_Notebook_View</tabs>
     <uiType>Lightning</uiType>
     <workspaceConfig>
         <mappings>
             <tab>Home</tab>
+        </mappings>
+        <mappings>
+            <tab>NSF_Notebook_View</tab>
         </mappings>
     </workspaceConfig>
 </CustomApplication> 

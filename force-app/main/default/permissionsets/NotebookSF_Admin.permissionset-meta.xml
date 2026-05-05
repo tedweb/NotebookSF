@@ -311,4 +311,8 @@
         <tab>Home</tab>
         <visibility>Visible</visibility>
     </tabSettings>
+    <tabSettings>
+        <tab>NSF_Notebook_View</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>
