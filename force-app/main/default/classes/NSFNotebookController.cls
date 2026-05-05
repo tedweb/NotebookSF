@@ -1,6 +1,6 @@
 public with sharing class NSFNotebookController {
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static List<NSF_Notebook__c> getNotebooksByProject(Id projectId) {
         return [
             SELECT Id, Title__c, NSF_ProjectId__c
